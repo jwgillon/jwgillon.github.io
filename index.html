@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Game Makers by Jeff</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:        #f0b429;
+  --gold-light:  #ffd166;
+  --gold-dim:    #9a7520;
+  --white:       #ffffff;
+  --off-white:   #f5f3ee;
+  --label:       #dde4ff;
+  --hint:        #b8c4f0;
+  --border:      rgba(240,180,41,0.4);
+  --card-bg:     rgba(255,255,255,0.10);
+  --card-border: rgba(180,210,255,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: linear-gradient(155deg, #1a4fd6 0%, #1035a8 45%, #0d2068 100%);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.06) 3px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none; z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,209,102,0.7), transparent);
+  pointer-events: none; z-index: 0;
+}
+
+.page {
+  position: relative; z-index: 1;
+  max-width: 720px; margin: 0 auto;
+  padding: 56px 24px 80px;
+}
+
+/* ── Header ── */
+.header { text-align: center; margin-bottom: 48px; }
+
+.logo-line {
+  display: flex; align-items: center;
+  justify-content: center; gap: 16px; margin-bottom: 4px;
+}
+
+.logo-bar { width: 44px; height: 2px; background: var(--gold); opacity: 0.9; }
+
+.logo-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px; letter-spacing: 5px; color: var(--white); line-height: 1;
+  text-shadow: 0 2px 32px rgba(255,209,102,0.25);
+}
+
+.logo-text .accent { color: var(--gold-light); }
+
+.tagline {
+  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold-light); margin-top: 10px; font-weight: 500;
+}
+
+.intro {
+  font-size: 16px; color: var(--hint); line-height: 1.7;
+  margin-top: 20px; max-width: 520px; margin-left: auto; margin-right: auto;
+}
+
+.intro strong { color: var(--white); font-weight: 600; }
+
+/* ── Status bar ── */
+.ping-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-top: 24px;
+  font-size: 12px; letter-spacing: 1px; color: var(--hint);
+}
+
+.ping-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold-dim); flex-shrink: 0;
+  transition: background 0.4s;
+}
+.ping-dot.warming { background: var(--gold); animation: pulse 1s ease-in-out infinite; }
+.ping-dot.ready   { background: #2ecc71; animation: none; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Game grid ── */
+.games {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+@media (max-width: 540px) {
+  .games { grid-template-columns: 1fr; }
+  .logo-text { font-size: 40px; }
+}
+
+/* ── Game card ── */
+.game-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px; overflow: hidden;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+  display: flex; flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.game-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.game-screenshot {
+  width: 100%; display: block; height: 180px;
+  object-fit: cover; object-position: center top;
+}
+
+.game-body { padding: 22px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+
+.game-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--gold); margin-bottom: 8px;
+}
+
+.game-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 3px; color: var(--white); line-height: 1;
+  margin-bottom: 10px;
+}
+
+.game-title .accent { color: var(--gold-light); }
+
+.game-desc {
+  font-size: 13px; color: var(--hint); line-height: 1.6; flex: 1;
+  margin-bottom: 20px;
+}
+
+.game-desc strong { color: var(--white); font-weight: 600; }
+
+.btn-launch {
+  display: block; width: 100%; padding: 14px;
+  background: var(--gold); color: #1a0e00;
+  border: none; border-radius: 6px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 4px; cursor: pointer;
+  text-align: center; text-decoration: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: 0 4px 22px rgba(240,180,41,0.35);
+}
+
+.btn-launch:hover {
+  background: var(--gold-light);
+  box-shadow: 0 4px 30px rgba(255,209,102,0.5);
+}
+
+.btn-launch:active { transform: scale(0.99); }
+
+/* ── Features strip ── */
+.features {
+  display: flex; justify-content: center;
+  flex-wrap: wrap; gap: 10px 28px;
+  margin-top: 48px;
+}
+
+.feat {
+  font-size: 12px; letter-spacing: 1px; color: var(--hint);
+  display: flex; align-items: center; gap: 7px;
+}
+
+.feat-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center; margin-top: 52px;
+  font-size: 12px; color: rgba(180,196,240,0.45); letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="logo-line">
+      <div class="logo-bar"></div>
+      <div class="logo-text">AI <span class="accent">Game</span> Makers</div>
+      <div class="logo-bar"></div>
+    </div>
+    <div class="tagline">Powered by Gemini · PowerPoint Download</div>
+    <p class="intro">
+      Enter a <strong>theme</strong> and get a fully playable
+      <strong>PowerPoint game</strong> in seconds —
+      custom questions, answers, and a live scoreboard,
+      ready for your classroom or event.
+    </p>
+    <div class="ping-bar">
+      <div class="ping-dot warming" id="pingDot"></div>
+      <span id="pingLabel">Waking up game servers…</span>
+    </div>
+  </header>
+
+  <div class="games">
+
+    <div class="game-card">
+      <img class="game-screenshot" src="https://ai-jeoparty-powerpoint-creator.onrender.com/static/game1.png" alt="JeoparTy game board">
+      <div class="game-body">
+        <div class="game-badge">Classic Quiz Game</div>
+        <div class="game-title">Jeo<span class="accent">parTy</span></div>
+        <p class="game-desc">
+          Generate a <strong>5-category Jeopardy board</strong> with 25 custom clues and answers, Final JeoparTy, and a live 4-team scoreboard.
+          Perfect for reviewing vocabulary or any topic.
+        </p>
+        <a class="btn-launch" href="https://ai-jeoparty-powerpoint-creator.onrender.com/" target="_blank">
+          Launch →
+        </a>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <img class="game-screenshot" src="https://ai-family-fjord-powerpoint-creator.onrender.com/static/logo.png" alt="Family Fjord game board">
+      <div class="game-body">
+        <div class="game-badge">Survey Says Game</div>
+        <div class="game-title">Family <span class="accent">Fjord</span></div>
+        <p class="game-desc">
+          Generate <strong>10 survey-style questions</strong> with ranked answers and point values — straight into a polished Family Feud PowerPoint ready to play.
+        </p>
+        <a class="btn-launch" href="https://ai-family-fjord-powerpoint-creator.onrender.com/" target="_blank">
+          Launch →
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="features">
+    <div class="feat"><div class="feat-dot"></div>Free Gemini API key</div>
+    <div class="feat"><div class="feat-dot"></div>Key never leaves your browser</div>
+    <div class="feat"><div class="feat-dot"></div>Downloads as .pptm</div>
+    <div class="feat"><div class="feat-dot"></div>Live scoreboard included</div>
+    <div class="feat"><div class="feat-dot"></div>Windows PowerPoint required</div>
+  </div>
+
+  <footer class="footer">
+    <div style="margin-bottom: 8px;">
+      <a href="https://huatulcofish.wordpress.com/" target="_blank" style="color: var(--gold); text-decoration: none;">Designed by Jeff</a>
+      &nbsp;·&nbsp; Huatulco, Oaxaca, Mexico
+    </div>
+    <div>Game files generated server-side &nbsp;·&nbsp; API key used client-side only</div>
+  </footer>
+
+</div>
+<script>
+  const JEOPARTY_URL  = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
+  const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
+
+  const dot   = document.getElementById('pingDot');
+  const label = document.getElementById('pingLabel');
+
+  async function pingServer(url) {
+    try {
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function wakeServers() {
+    // Fire both pings simultaneously
+    await Promise.all([
+      pingServer(JEOPARTY_URL),
+      pingServer(FAMILYFJORD_URL)
+    ]);
+    dot.classList.remove('warming');
+    dot.classList.add('ready');
+    label.textContent = 'Servers are ready';
+  }
+
+  wakeServers();
+</script>
+</body>
+</html>
