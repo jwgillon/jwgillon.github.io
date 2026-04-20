@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Game Makers by Jeff</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="static/favicon-32x32.png">
 <style>
 :root {
   --gold:        #f0b429;
@@ -76,7 +77,7 @@ body::after {
 }
 
 .intro {
-  font-size: 16px; color: var(--hint); line-height: 1.7;
+  font-size: 16px; color: var(--hint); line-height: 1.2;
   margin-top: 20px; max-width: 520px; margin-left: auto; margin-right: auto;
 }
 
@@ -133,9 +134,16 @@ body::after {
 }
 
 .game-screenshot {
+  width: 100%; 
+  display: block; 
+  height: auto; /* The height will adjust perfectly to the image length */
+  object-fit: initial; 
+}
+
+/*.game-screenshot {
   width: 100%; display: block; height: 180px;
   object-fit: cover; object-position: center top;
-}
+}*/
 
 .game-body { padding: 22px 24px 24px; flex: 1; display: flex; flex-direction: column; }
 
@@ -214,9 +222,10 @@ body::after {
     <div class="tagline">Powered by Gemini · PowerPoint Download</div>
     <p class="intro">
       Enter a <strong>theme</strong> and get a fully playable
-      <strong>PowerPoint game</strong> in seconds —
-      custom questions, answers, and a scoreboard if you enable macros,
+      <strong>PowerPoint game</strong> in seconds 
+      <!-- — custom questions, answers, and a scoreboard if you enable macros,
       ready for your classroom or event.
+    -->
     </p>
     <div class="ping-bar">
       <div class="ping-dot warming" id="pingDot"></div>
@@ -227,10 +236,13 @@ body::after {
   <div class="games">
 
     <div class="game-card">
-      <img class="game-screenshot" src="static/JeopGame1.png" alt="Jeopardy Game Preview">
+      <img class="game-screenshot" src="static/JeopartyScreen2.png" alt="Jeopardy Game Preview">
+      <!-- class="game-screenshot" src="static/JeopGame1.png" alt="Jeopardy Game Preview"-->
       <div class="game-body">
+        <!--
         <div class="game-badge">Classic Quiz Game</div>
         <div class="game-title">Jeo<span class="accent">parTy</span></div>
+        -->
         <p class="game-desc">
           Generate a <strong>5-category Jeopardy board</strong> with 25 custom clues and answers, Final JeoparTy, and a live 4-team scoreboard.
           Perfect for reviewing vocabulary or any topic.
@@ -242,10 +254,13 @@ body::after {
     </div>
 
     <div class="game-card">
-      <img class="game-screenshot" src="static/logoFamFjord.png" alt="Family Fjord Logo">
+      <img class="game-screenshot" src="static/FamScreen2.png" alt="Family Fjord Game Preview">
+      <!--img class="game-screenshot" src="static/logoFamFjord.png" alt="Family Fjord Logo"-->
       <div class="game-body">
+        <!--
         <div class="game-badge">Survey Says Game</div>
         <div class="game-title">Family <span class="accent">Fjord</span></div>
+      -->
         <p class="game-desc">
           Generate <strong>10 survey-style questions</strong> with ranked answers and point values — straight into a polished Family Feud PowerPoint ready to play.
         </p>
@@ -256,7 +271,7 @@ body::after {
     </div>
 
   </div>
-
+  <!--
   <div class="features">
     <div class="feat"><div class="feat-dot"></div>Ready in seconds</div>
     <div class="feat"><div class="feat-dot"></div>Downloads as .pptm</div>
@@ -264,11 +279,10 @@ body::after {
     <div class="feat"><div class="feat-dot"></div>Shared Gemini API key</div>
     <div class="feat"><div class="feat-dot"></div>Windows PowerPoint required</div>
   </div>
-
+  -->
   <footer class="footer">
     <div style="margin-bottom: 8px;">
       <a href="https://huatulcofish.wordpress.com/" target="_blank" style="color: var(--gold); text-decoration: none;">Designed by Jeff</a>
-      &nbsp;·&nbsp; Huatulco, Oaxaca, Mexico
     </div>
     <div>Automated server-side generation &nbsp;·&nbsp; Integrated AI processing
     </div>
