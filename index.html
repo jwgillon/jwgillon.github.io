@@ -228,10 +228,68 @@ body::after {
 .footer {
   text-align: center; margin-top: 32px;
   font-size: 12px; color: rgba(180,196,240,0.45); letter-spacing: 1px;
+
+  /* servers not ready yet */
+
+  .loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 32, 104, 0.92); /* Matches your deep blue */
+  display: none; /* Changed via JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+}
+
+.loading-content {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 12px;
+  max-width: 90%;
+  width: 400px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gold-dim);
+  border-top: 3px solid var(--gold);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.warming-indicator {
+  background: rgba(240, 180, 41, 0.1);
+  border-color: var(--border);
+  color: var(--gold-light);
+  animation: pulse 1.5s infinite;
+}
 }
 </style>
 </head>
 <body>
+
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="logo-text" style="font-size: 32px; margin-bottom: 10px;">Engines <span class="accent">Warming</span></div>
+    <p class="intro" style="margin-top: 0; margin-bottom: 20px;">We're waking up the game servers.<br>Please wait about 30 seconds.</p>
+    <div class="ping-bar warming-indicator">
+       <div class="ping-dot warming"></div>
+       <span>LOADING GAME ENGINE...</span>
+    </div>
+  </div>
+</div>
+
+
 <div class="page">
 
   <header class="header">
@@ -310,74 +368,80 @@ const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com
 
 const dot = document.getElementById('pingDot');
 const label = document.getElementById('pingLabel');
+const overlay = document.getElementById('loadingOverlay'); // Added for the popup
 let serversReady = false;
 
+// 1. YOUR PING LOGIC (Kept exactly as you had it)
 async function pingServer(url) {
   try {
     await fetch(url, { method: 'GET', mode: 'no-cors' });
-  } catch (e) {}
+  } catch (e) { console.log("Ping failed for: " + url); }
 }
 
-// Increased attempts to 25 to cover Render's full 50-second wake-up time
-async function pingUntilReady(url, attempts = 25, delay = 2000) {
+async function pingUntilReady(url, attempts = 30, delay = 2000) {
   for (let i = 0; i < attempts; i++) {
     await pingServer(url);
-    if (serversReady) break; // Stop looping if the other server already finished
+    if (serversReady) break;
     await new Promise(res => setTimeout(res, delay));
   }
 }
 
 async function wakeServers() {
-  // Fire both pings simultaneously
+  console.log("Wake-up call started...");
   await Promise.all([
     pingUntilReady(JEOPARTY_URL),
     pingUntilReady(FAMILYFJORD_URL)
   ]);
-
   serversReady = true;
+  
+  // Update the UI
   dot.classList.remove('warming');
   dot.classList.add('ready');
   label.textContent = 'Servers are ready';
+  
+  // If the overlay is visible when servers wake up, hide it and open the game
+  if (overlay.style.display === 'flex') {
+    overlay.style.display = 'none';
+  }
+  
+  console.log("Servers are ready!");
 }
 
-// This now selects both the giant card links AND the launch buttons
-document.querySelectorAll('a[href*="onrender.com"]').forEach(link => {
-  link.addEventListener('click', function(e) {
-    if (!serversReady) {
-      e.preventDefault();
-      if (this.dataset.loading) return;
-      this.dataset.loading = "true";
+// 2. UPDATED LISTENER (Triggers the Popup)
+function attachListeners() {
+  const links = document.querySelectorAll('a[href*="onrender.com"]');
+  
+  links.forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (!serversReady) {
+        e.preventDefault(); // Stop the jump to Render
+        
+        // Show the professional popup warning
+        overlay.style.display = 'flex';
 
-      // TARGET THE BUTTON: This finds the actual button text inside your big link
-      const btn = this.querySelector('.btn-launch');
-      const originalBtnText = btn.innerHTML;
-      
-      // Update the button text, not the whole card
-      btn.innerHTML = "Waking up...";
-      this.style.opacity = "0.7";
-      this.style.cursor = "wait";
-
-      const checkInterval = setInterval(() => {
-        if (serversReady) {
-          clearInterval(checkInterval);
-          
-          // Restore the button text
-          btn.innerHTML = originalBtnText;
-          this.style.opacity = "1";
-          this.style.cursor = "pointer";
-          delete this.dataset.loading;
-
-          window.open(this.href, '_blank');
-        }
-      }, 2000);
-    }
+        // This loop waits for wakeServers() to finish
+        const checkInterval = setInterval(() => {
+          if (serversReady) {
+            clearInterval(checkInterval);
+            overlay.style.display = 'none';
+            
+            // Success: Now open the specific link the user clicked
+            window.open(this.href, '_blank');
+          }
+        }, 1000);
+      }
+    });
   });
-});
+}
 
+// RUN BOTH
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachListeners);
+} else {
+  attachListeners();
+}
 wakeServers();
-  
-  
-  
+
   
   /*const JEOPARTY_URL  = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
   const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
