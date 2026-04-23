@@ -231,14 +231,16 @@ body::after {
 
   /* servers not ready yet */
 
-  .loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(13, 32, 104, 0.92); /* Matches your deep blue */
-  display: none; /* Changed via JS */
+.loading-overlay {
+  position: fixed; /* Ensures it stays in the center even if you scroll */
+  inset: 0;       /* Short for top:0, left:0, right:0, bottom:0 */
+  width: 100vw;   /* Full viewport width */
+  height: 100vh;  /* Full viewport height */
+  background: rgba(13, 32, 104, 0.98); /* Slightly darker to hide the background */
+  display: none;  /* Hidden until JS changes it to 'flex' */
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 99999; /* Higher than any card or button on your page */
   backdrop-filter: blur(10px);
 }
 
