@@ -340,26 +340,33 @@ async function wakeServers() {
   label.textContent = 'Servers are ready';
 }
 
-document.querySelectorAll('.btn-launch').forEach(button => {
-  button.addEventListener('click', function(e) {
+// This now selects both the giant card links AND the launch buttons
+document.querySelectorAll('a[href*="onrender.com"]').forEach(link => {
+  link.addEventListener('click', function(e) {
     if (!serversReady) {
       e.preventDefault();
-
       if (this.dataset.loading) return;
       this.dataset.loading = "true";
 
-      const originalText = this.innerHTML;
-      this.innerHTML = "Waking up... Please wait";
+      // TARGET THE BUTTON: This finds the actual button text inside your big link
+      const btn = this.querySelector('.btn-launch');
+      const originalBtnText = btn.innerHTML;
+      
+      // Update the button text, not the whole card
+      btn.innerHTML = "Waking up...";
       this.style.opacity = "0.7";
+      this.style.cursor = "wait";
 
       const checkInterval = setInterval(() => {
         if (serversReady) {
           clearInterval(checkInterval);
-          this.innerHTML = originalText;
+          
+          // Restore the button text
+          btn.innerHTML = originalBtnText;
           this.style.opacity = "1";
+          this.style.cursor = "pointer";
           delete this.dataset.loading;
 
-          // Opens in a new tab so they don't leave your site
           window.open(this.href, '_blank');
         }
       }, 2000);
@@ -368,8 +375,6 @@ document.querySelectorAll('.btn-launch').forEach(button => {
 });
 
 wakeServers();
-  
-  
   
   
   
