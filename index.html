@@ -371,16 +371,25 @@ let serversReady = false;
 // 1. YOUR PING LOGIC (Kept exactly as you had it)
 async function pingServer(url) {
   try {
-    await fetch(url, { method: 'GET', mode: 'no-cors' });
-  } catch (e) { console.log("Ping failed for: " + url); }
+    const res = await fetch(url + "health", { method: "GET" });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 async function pingUntilReady(url, attempts = 30, delay = 2000) {
   for (let i = 0; i < attempts; i++) {
-    await pingServer(url);
-    if (serversReady) break;
+    const isReady = await pingServer(url);
+
+    if (isReady) {
+      return true; // stop as soon as server responds
+    }
+
     await new Promise(res => setTimeout(res, delay));
   }
+
+  return false; // never became ready
 }
 
 async function wakeServers() {
