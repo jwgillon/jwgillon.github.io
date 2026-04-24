@@ -372,24 +372,30 @@ let serversReady = false;
 async function pingServer(url) {
   try {
     const res = await fetch(url + "health", { method: "GET" });
+    console.log(`[PING] ${url} → ${res.status}`);
     return res.ok;
-  } catch {
+  } catch (e) {
+    console.log(`[PING FAIL] ${url}`);
     return false;
   }
 }
 
 async function pingUntilReady(url, attempts = 30, delay = 2000) {
   for (let i = 0; i < attempts; i++) {
+    console.log(`[CHECK ${i+1}] ${url}`);
+
     const isReady = await pingServer(url);
 
     if (isReady) {
-      return true; // stop as soon as server responds
+      console.log(`[READY] ${url}`);
+      return true;
     }
 
     await new Promise(res => setTimeout(res, delay));
   }
 
-  return false; // never became ready
+  console.log(`[TIMEOUT] ${url}`);
+  return false;
 }
 
 async function wakeServers() {
@@ -420,6 +426,7 @@ function attachListeners() {
   cards.forEach(card => {
     card.addEventListener('click', function() {
       const targetUrl = this.dataset.url;
+      console.log("User clicked:", targetUrl); // 👈 HERE
 
       if (!serversReady) {
         // Prevent double clicks
