@@ -482,6 +482,7 @@ function showReadyState() {
   document.getElementById('warmingBar').style.display = 'none';
   document.getElementById('triviaFeedback').textContent = '';
   document.getElementById('triviaReady').style.display = 'block';
+  document.querySelector('.spinner').style.display = 'none';  // hide spinner
   document.getElementById('goBtn').onclick = () => {
     document.getElementById('loadingOverlay').style.display = 'none';
     if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
