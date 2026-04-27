@@ -294,31 +294,13 @@ body::after {
 <body>
 
 <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-<div class="loading-content">
-  <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
-    <div class="spinner" style="width: 28px; height: 28px; margin: 0; flex-shrink: 0;"></div>
-    <div class="logo-text" style="font-size: 32px;">Waking <span class="accent">Game Engine</span></div>
-  </div>
-  <div style="text-align: center; font-size: 13px; color: var(--hint); margin-bottom: 20px;">⚡ Some Trivia While You Wait?</div>
-    <div id="triviaBox">
-      <div id="triviaQuestion" style="font-size: 15px; color: var(--white); line-height: 1.5; margin-bottom: 6px; min-height: 48px;"></div>
-      <div id="triviaOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;"></div>
-      <div id="triviaFeedback" style="font-size: 13px; min-height: 20px; color: var(--gold-light);"></div>
-    </div>
-
-    <div id="triviaReady" style="display:none; margin-top: 16px;">
-      <div style="color: #2ecc71; font-size: 14px; margin-bottom: 12px;">✓ Servers are ready!</div>
-      <button id="goBtn" style="
-        background: var(--gold); color: #1a0e00;
-        border: none; border-radius: 6px; padding: 12px 28px;
-        font-family: 'Bebas Neue', sans-serif; font-size: 20px;
-        letter-spacing: 3px; cursor: pointer; width: 100%;
-      ">LET'S GO →</button>
-    </div>
-
-    <div class="ping-bar warming-indicator" id="warmingBar" style="margin-top: 16px;">
-      <div class="ping-dot warming"></div>
-      <span>LOADING GAME ENGINE...</span>
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="logo-text" style="font-size: 32px; margin-bottom: 10px;">Engines <span class="accent">Warming</span></div>
+    <p class="intro" style="margin-top: 0; margin-bottom: 20px;">We're waking up the game servers.<br>Please wait about 30 seconds.</p>
+    <div class="ping-bar warming-indicator">
+       <div class="ping-dot warming"></div>
+       <span>LOADING GAME ENGINE...</span>
     </div>
   </div>
 </div>
@@ -390,103 +372,7 @@ body::after {
 </div>
 <script>
 const JEOPARTY_URL = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
-// const JEOPARTY_URL = 'https://fake-url-that-will-never-respond.com/';
 const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
-
-// ── Trivia ──
-const TRIVIA = [
-  { q: "What is the capital of Australia?", options: ["Sydney", "Melbourne", "Canberra", "Brisbane"], answer: 2 },
-  { q: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], answer: 1 },
-  { q: "Which planet is known as the Red Planet?", options: ["Venus", "Jupiter", "Mars", "Saturn"], answer: 2 },
-  { q: "Who painted the Mona Lisa?", options: ["Michelangelo", "Raphael", "Leonardo da Vinci", "Botticelli"], answer: 2 },
-  { q: "What is the chemical symbol for gold?", options: ["Go", "Gd", "Au", "Ag"], answer: 2 },
-  { q: "How many bones are in the adult human body?", options: ["196", "206", "216", "226"], answer: 1 },
-  { q: "Which country invented pizza?", options: ["France", "Greece", "Spain", "Italy"], answer: 3 },
-  { q: "What is the longest river in the world?", options: ["Amazon", "Nile", "Yangtze", "Mississippi"], answer: 1 },
-  { q: "In what year did World War II end?", options: ["1943", "1944", "1945", "1946"], answer: 2 },
-  { q: "What is the smallest country in the world?", options: ["Monaco", "San Marino", "Liechtenstein", "Vatican City"], answer: 3 },
-  { q: "How many strings does a standard guitar have?", options: ["4", "5", "6", "7"], answer: 2 },
-  { q: "Which element has the atomic number 1?", options: ["Helium", "Hydrogen", "Lithium", "Carbon"], answer: 1 },
-  { q: "What is the fastest land animal?", options: ["Lion", "Horse", "Cheetah", "Greyhound"], answer: 2 },
-  { q: "Which ocean is the largest?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], answer: 3 },
-  { q: "How many players are on a standard soccer team?", options: ["9", "10", "11", "12"], answer: 2 },
-  { q: "What language has the most native speakers worldwide?", options: ["English", "Spanish", "Mandarin Chinese", "Hindi"], answer: 2 },
-  { q: "Which continent is the Sahara Desert located on?", options: ["Asia", "Australia", "South America", "Africa"], answer: 3 },
-  { q: "What is the hardest natural substance on Earth?", options: ["Gold", "Iron", "Diamond", "Quartz"], answer: 2 },
-];
-
-let triviaQueue = [];
-let currentTrivia = null;
-let triviaTimeout = null;
-let pendingUrl = null;
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function nextTrivia() {
-  if (triviaQueue.length === 0) triviaQueue = shuffleArray(TRIVIA);
-  currentTrivia = triviaQueue.shift();
-
-  document.getElementById('triviaQuestion').textContent = currentTrivia.q;
-  document.getElementById('triviaFeedback').textContent = '';
-
-  const optDiv = document.getElementById('triviaOptions');
-  optDiv.innerHTML = '';
-  currentTrivia.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = opt;
-    btn.style.cssText = `
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-      color: var(--white); border-radius: 6px; padding: 10px 8px;
-      font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer;
-      transition: background 0.15s; text-align: left;
-    `;
-    btn.onmouseover = () => { if (!btn.dataset.answered) btn.style.background = 'rgba(255,255,255,0.15)'; };
-    btn.onmouseout  = () => { if (!btn.dataset.answered) btn.style.background = 'rgba(255,255,255,0.08)'; };
-    btn.onclick = () => answerTrivia(i);
-    optDiv.appendChild(btn);
-  });
-}
-
-function answerTrivia(idx) {
-  const buttons = document.querySelectorAll('#triviaOptions button');
-  buttons.forEach(b => { b.onclick = null; b.dataset.answered = 'true'; });
-
-  const correct = idx === currentTrivia.answer;
-  const feedback = document.getElementById('triviaFeedback');
-
-  buttons[idx].style.background = correct ? 'rgba(46,204,113,0.3)' : 'rgba(231,76,60,0.3)';
-  buttons[idx].style.borderColor = correct ? '#2ecc71' : '#e74c3c';
-
-  if (!correct) {
-    buttons[currentTrivia.answer].style.background = 'rgba(46,204,113,0.3)';
-    buttons[currentTrivia.answer].style.borderColor = '#2ecc71';
-    feedback.style.color = '#e74c3c';
-    feedback.textContent = '✗ The answer was: ' + currentTrivia.options[currentTrivia.answer];
-  } else {
-    feedback.style.color = '#2ecc71';
-    feedback.textContent = '✓ Correct!';
-  }
-
-  triviaTimeout = setTimeout(nextTrivia, 3000);
-}
-
-function showReadyState() {
-  clearTimeout(triviaTimeout);
-  document.getElementById('warmingBar').style.display = 'none';
-  document.getElementById('triviaFeedback').textContent = '';
-  document.getElementById('triviaReady').style.display = 'block';
-  document.getElementById('goBtn').onclick = () => {
-    document.getElementById('loadingOverlay').style.display = 'none';
-    if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
-  };
-}
 
 const dot = document.getElementById('pingDot');
 const label = document.getElementById('pingLabel');
@@ -530,32 +416,51 @@ async function wakeServers() {
     pingUntilReady(FAMILYFJORD_URL)
   ]);
   serversReady = true;
-
-  // Update main page status bar
+  
+  // Update the UI
   dot.classList.remove('warming');
   dot.classList.add('ready');
   label.textContent = 'Servers are ready';
+  
+  // If the overlay is visible when servers wake up, hide it and open the game
 
-  // If overlay is showing, switch to ready state
+  // COMMENT THIS OUT FOR TESTING:
+  /*
   if (overlay.style.display === 'flex') {
-    showReadyState();
+    overlay.style.display = 'none';
   }
+  */
+
 
   console.log("Servers are ready!");
 }
 
+// 2. UPDATED LISTENER (Triggers the Popup)
 function attachListeners() {
   const cards = document.querySelectorAll('.game-card');
 
   cards.forEach(card => {
     card.addEventListener('click', function() {
       const targetUrl = this.dataset.url;
+      console.log("User clicked:", targetUrl); // 👈 HERE
 
       if (!serversReady) {
-        if (overlay.style.display === 'flex') return; // already showing
-        pendingUrl = targetUrl;
+        // Prevent double clicks
+        if (this.dataset.loading) return;
+        this.dataset.loading = "true";
+
         overlay.style.display = 'flex';
-        nextTrivia(); // start trivia
+
+        const checkInterval = setInterval(() => {
+          if (serversReady) {
+            // COMMENT THIS OUT FOR TESTING:
+            //clearInterval(checkInterval);
+            //overlay.style.display = 'none';
+            console.log("Testing: Overlay remains visible despite serversReady being true.");
+            //window.location.href = targetUrl;
+          }
+        }, 1000);
+
       } else {
         window.location.href = targetUrl;
       }
@@ -563,18 +468,43 @@ function attachListeners() {
   });
 }
 
-// RUN
+// RUN BOTH
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', attachListeners);
 } else {
   attachListeners();
 }
 wakeServers();
+overlay.style.display = 'flex';
+  
+  /*const JEOPARTY_URL  = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
+  const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
 
-// testing the loading game
-//pendingUrl = JEOPARTY_URL;
-//overlay.style.display = 'flex';
-//nextTrivia();
+  const dot   = document.getElementById('pingDot');
+  const label = document.getElementById('pingLabel');
+
+  async function pingServer(url) {
+    try {
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function wakeServers() {
+    // Fire both pings simultaneously
+    await Promise.all([
+      pingServer(JEOPARTY_URL),
+      pingServer(FAMILYFJORD_URL)
+    ]);
+    dot.classList.remove('warming');
+    dot.classList.add('ready');
+    label.textContent = 'Servers are ready';
+  }
+
+  wakeServers();
+  */
 </script>
 </body>
 </html>
