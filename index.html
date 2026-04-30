@@ -490,7 +490,8 @@ function showReadyState() {
   document.getElementById('goBtn').onclick = () => {
     document.getElementById('loadingOverlay').style.display = 'none';
     if (pendingUrl) {
-        window.open(pendingUrl, '_blank'); 
+        // window.open(pendingUrl, '_blank'); 
+        window.location.href = pendingUrl;
     }
     //if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
   };
@@ -531,6 +532,37 @@ async function pingUntilReady(url, attempts = 30, delay = 2000) {
   return false;
 }
 
+let wakingPromise = null;
+
+function wakeServers() {
+  if (wakingPromise) return wakingPromise;
+
+  wakingPromise = (async () => {
+    console.log("Wake-up call started...");
+
+    await Promise.all([
+      pingUntilReady(JEOPARTY_URL),
+      pingUntilReady(FAMILYFJORD_URL)
+    ]);
+
+    serversReady = true;
+
+    dot.classList.remove('warming');
+    dot.classList.add('ready');
+    label.textContent = 'Servers are ready';
+
+    if (overlay.style.display === 'flex') {
+      showReadyState();
+    }
+
+    console.log("Servers are ready!");
+    wakingPromise = null;
+  })();
+
+  return wakingPromise;
+}
+
+/*
 async function wakeServers() {
   console.log("Wake-up call started...");
   await Promise.all([
@@ -551,7 +583,30 @@ async function wakeServers() {
  
   console.log("Servers are ready!");
 }
+*/
 
+function attachListeners() {
+  const cards = document.querySelectorAll('.game-card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', async function() {
+      const targetUrl = this.dataset.url;
+
+      if (overlay.style.display === 'flex') return; // already showing
+
+      pendingUrl = targetUrl;
+      overlay.style.display = 'flex';
+      nextTrivia(); // start trivia
+
+      // Always wake + wait (don’t trust cached state)
+      await wakeServers();
+
+      //window.open(targetUrl, '_blank');
+    });
+  });
+}
+
+/*
 function attachListeners() {
   const cards = document.querySelectorAll('.game-card');
 
@@ -572,7 +627,7 @@ function attachListeners() {
     });
   });
 }
-
+*/
 
 // RUN
 if (document.readyState === 'loading') {
