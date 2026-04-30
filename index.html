@@ -552,24 +552,22 @@ async function wakeServers() {
 function attachListeners() {
   const cards = document.querySelectorAll('.game-card');
 
-cards.forEach(card => {
-    card.addEventListener('click', async function() {
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
       const targetUrl = this.dataset.url;
- 
-      // Always do a fresh check on click
-      const isReady = await pingServer(targetUrl);
-      if (isReady) {
-        window.location.href = targetUrl;
-      } else {
-        if (overlay.style.display === 'flex') return;
-        serversReady = false;
+
+      if (!serversReady) {
+        if (overlay.style.display === 'flex') return; // already showing
         pendingUrl = targetUrl;
         overlay.style.display = 'flex';
-        nextTrivia();
+        nextTrivia(); // start trivia
+      } else {
+        window.location.href = targetUrl;
       }
     });
   });
 }
+
 
 // RUN
 if (document.readyState === 'loading') {
