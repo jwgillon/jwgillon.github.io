@@ -488,7 +488,7 @@ function showReadyState() {
   document.getElementById('triviaReady').style.display = 'block';
   document.querySelector('.spinner').style.display = 'none';  // hide spinner
   document.getElementById('goBtn').onclick = () => {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    //document.getElementById('loadingOverlay').style.display = 'none';
     if (pendingUrl) {
         // window.open(pendingUrl, '_blank'); 
         window.location.href = pendingUrl;
