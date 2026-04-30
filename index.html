@@ -562,7 +562,9 @@ function attachListeners() {
         overlay.style.display = 'flex';
         nextTrivia(); // start trivia
       } else {
-        window.location.href = targetUrl;
+        // This opens the Render app in a new tab
+        window.open(targetUrl, '_blank');
+        //window.location.href = targetUrl;
       }
     });
   });
