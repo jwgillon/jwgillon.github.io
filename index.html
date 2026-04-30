@@ -490,6 +490,10 @@ function showReadyState() {
   document.getElementById('goBtn').onclick = () => {
     //document.getElementById('loadingOverlay').style.display = 'none';
     if (pendingUrl) {
+        // Reset status BEFORE leaving
+        dot.classList.remove('ready');
+        dot.classList.add('warming');
+        label.textContent = 'Server status unknown';
         // window.open(pendingUrl, '_blank'); 
         window.location.href = pendingUrl;
     }
