@@ -556,30 +556,6 @@ function attachListeners() {
   const cards = document.querySelectorAll('.game-card');
 
   cards.forEach(card => {
-  card.addEventListener('click', async function() {
-    const targetUrl = this.dataset.url;
-
-    if (overlay.style.display === 'flex') return;
-
-    const isReady = await pingServer(targetUrl);
-    if (isReady) {
-      window.open(targetUrl, '_blank');
-    } else {
-      serversReady = false;
-      pendingUrl = targetUrl;
-      // Reset overlay to trivia state
-      document.getElementById('triviaReady').style.display = 'none';
-      document.getElementById('warmingBar').style.display = 'flex';
-      document.querySelector('.spinner').style.display = 'block';
-      overlay.style.display = 'flex';
-      nextTrivia();
-    }
-  });
-});
-}
- 
-/*
-  cards.forEach(card => {
     card.addEventListener('click', function() {
       const targetUrl = this.dataset.url;
 
@@ -596,7 +572,7 @@ function attachListeners() {
     });
   });
 }
-*/
+
 
 // RUN
 if (document.readyState === 'loading') {
