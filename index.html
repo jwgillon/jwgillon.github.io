@@ -555,7 +555,7 @@ function attachListeners() {
 cards.forEach(card => {
     card.addEventListener('click', async function() {
       const targetUrl = this.dataset.url;
-
+ 
       // Always do a fresh check on click
       const isReady = await pingServer(targetUrl);
       if (isReady) {
