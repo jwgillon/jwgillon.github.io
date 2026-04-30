@@ -489,7 +489,10 @@ function showReadyState() {
   document.querySelector('.spinner').style.display = 'none';  // hide spinner
   document.getElementById('goBtn').onclick = () => {
     document.getElementById('loadingOverlay').style.display = 'none';
-    if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
+    if (pendingUrl) {
+        window.open(pendingUrl, '_blank'); 
+    }
+    //if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
   };
 }
 
