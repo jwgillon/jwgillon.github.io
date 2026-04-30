@@ -16,7 +16,7 @@
   --label:       #dde4ff;
   --hint:        #b8c4f0;
   --border:      rgba(240,180,41,0.4);
-  --card-bg:     rgba(13, 32, 104, 0.58);
+  --card-bg:     rgba(37, 44, 164, 0.58);
   --card-border: rgba(180,210,255,0.5);
 }
 
@@ -139,7 +139,11 @@ body::after {
 
 /* ── Game card ── */
 .game-card {
-  background: var(--card-bg);
+/*  background: var(--card-bg);*/
+
+background: rgba(30, 37, 144, 0.65);
+
+
   border: 1px solid var(--card-border);
   border-radius: 8px; overflow: hidden;
   backdrop-filter: blur(18px);
@@ -299,7 +303,7 @@ body::after {
     <div class="spinner" style="width: 28px; height: 28px; margin: 0; flex-shrink: 0;"></div>
     <div class="logo-text" style="font-size: 32px;">Waking <span class="accent">Game Engine</span></div>
   </div>
-  <div style="text-align: center; font-size: 13px; color: var(--hint); margin-bottom: 20px;">⚡ Some Trivia While You Wait?</div>
+  <div style="text-align: center; font-size: 16px; color: var(--hint); margin-bottom: 20px;">⚡ Loading can take a minute. Some Trivia While You Wait?</div>
     <div id="triviaBox">
       <div id="triviaQuestion" style="font-size: 15px; color: var(--white); line-height: 1.5; margin-bottom: 6px; min-height: 48px;"></div>
       <div id="triviaOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;"></div>
@@ -482,6 +486,7 @@ function showReadyState() {
   document.getElementById('warmingBar').style.display = 'none';
   document.getElementById('triviaFeedback').textContent = '';
   document.getElementById('triviaReady').style.display = 'block';
+  document.querySelector('.spinner').style.display = 'none';  // hide spinner
   document.getElementById('goBtn').onclick = () => {
     document.getElementById('loadingOverlay').style.display = 'none';
     if (pendingUrl) window.location.href = pendingUrl; // comment out to test loading messages
