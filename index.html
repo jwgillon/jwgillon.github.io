@@ -545,7 +545,7 @@ async function wakeServers() {
   if (overlay.style.display === 'flex') {
     showReadyState();
   }
-
+ 
   console.log("Servers are ready!");
 }
 
@@ -559,7 +559,9 @@ cards.forEach(card => {
       // Always do a fresh check on click
       const isReady = await pingServer(targetUrl);
       if (isReady) {
-        window.location.href = targetUrl;
+        //window.location.href = targetUrl;
+        // This opens the Render app in a new tab
+        window.open(targetUrl, '_blank');
       } else {
         if (overlay.style.display === 'flex') return;
         serversReady = false;
