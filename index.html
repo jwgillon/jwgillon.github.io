@@ -406,14 +406,30 @@ const JEOPARTY_URL = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
 // const JEOPARTY_URL = 'https://fake-url-that-will-never-respond.com/';
 const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
 
+let wakingPromise = null;
+let wakeAborted = false;
+
 function closeOverlay() {
   clearTimeout(triviaTimeout);
   overlay.style.display = 'none';
+  pendingUrl = null;
+
+  // Cancel the wake result
+  wakeAborted = true;
+  wakingPromise = null;
+  serversReady = false;
+
+  // Reset dot
+  dot.classList.remove('ready');
+  dot.classList.add('warming');
+  label.textContent = 'Server status unknown';
+
+  // Reset overlay UI for next time
   document.getElementById('triviaReady').style.display = 'none';
   document.getElementById('warmingBar').style.display = 'block';
   document.querySelector('.spinner').style.display = 'block';
-  pendingUrl = null;
 }
+
 
 
 // ── Trivia ──
@@ -555,10 +571,10 @@ async function pingUntilReady(url, attempts = 30, delay = 2000) {
   return false;
 }
 
-let wakingPromise = null;
-
 function wakeServers() {
   if (wakingPromise) return wakingPromise;
+
+  wakeAborted = false; // reset flag for this run
 
   wakingPromise = (async () => {
     console.log("Wake-up call started...");
@@ -568,8 +584,13 @@ function wakeServers() {
       pingUntilReady(FAMILYFJORD_URL)
     ]);
 
-    serversReady = true;
+    if (wakeAborted) {
+      console.log("Wake completed but was aborted — ignoring.");
+      wakingPromise = null;
+      return;
+    }
 
+    serversReady = true;
     dot.classList.remove('warming');
     dot.classList.add('ready');
     label.textContent = 'Servers are ready';
