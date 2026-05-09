@@ -407,29 +407,34 @@ const JEOPARTY_URL = 'https://ai-jeoparty-powerpoint-creator.onrender.com/';
 const FAMILYFJORD_URL = 'https://ai-family-fjord-powerpoint-creator.onrender.com/';
 
 let wakingPromise = null;
-let wakeAborted = false;
+let serversReady = false;
+let serversReadyAt = null;
+const SERVER_READY_TTL = 10 * 60 * 1000;
+const dot = document.getElementById('pingDot');
+const label = document.getElementById('pingLabel');
+const overlay = document.getElementById('loadingOverlay'); // Added for the popup
 
 function closeOverlay() {
-  clearTimeout(triviaTimeout);
-  overlay.style.display = 'none';
-  pendingUrl = null;
 
-  // Cancel the wake result
-  wakeAborted = true;
-  wakingPromise = null;
-  serversReady = false;
+  location.reload();
 
-  // Reset dot
-  dot.classList.remove('ready');
-  dot.classList.add('warming');
-  label.textContent = 'Server status unknown';
-
-  // Reset overlay UI for next time
-  document.getElementById('triviaReady').style.display = 'none';
-  document.getElementById('warmingBar').style.display = 'block';
-  document.querySelector('.spinner').style.display = 'block';
 }
 
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && serversReady && serversReadyAt) {
+    if (Date.now() - serversReadyAt > SERVER_READY_TTL) {
+      // Gone too long — reset everything
+      serversReady = false;
+      serversReadyAt = null;
+      wakingPromise = null;
+      dot.classList.remove('ready');
+      dot.classList.add('warming');
+      label.textContent = 'Waking up game servers…';
+      wakeServers(); // start pinging again silently in background
+    }
+  }
+});
 
 
 // ── Trivia ──
@@ -536,10 +541,6 @@ function showReadyState() {
   };
 }
 
-const dot = document.getElementById('pingDot');
-const label = document.getElementById('pingLabel');
-const overlay = document.getElementById('loadingOverlay'); // Added for the popup
-let serversReady = false;
 
 // 1. YOUR PING LOGIC (Kept exactly as you had it)
 async function pingServer(url) {
@@ -574,8 +575,6 @@ async function pingUntilReady(url, attempts = 30, delay = 2000) {
 function wakeServers() {
   if (wakingPromise) return wakingPromise;
 
-  wakeAborted = false; // reset flag for this run
-
   wakingPromise = (async () => {
     console.log("Wake-up call started...");
 
@@ -584,13 +583,8 @@ function wakeServers() {
       pingUntilReady(FAMILYFJORD_URL)
     ]);
 
-    if (wakeAborted) {
-      console.log("Wake completed but was aborted — ignoring.");
-      wakingPromise = null;
-      return;
-    }
-
     serversReady = true;
+    serversReadyAt = Date.now();
     dot.classList.remove('warming');
     dot.classList.add('ready');
     label.textContent = 'Servers are ready';
