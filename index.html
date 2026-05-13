@@ -361,29 +361,22 @@ background: rgba(30, 37, 144, 0.65);
     </div>
   </header>
 
- <div id="videoWrap" style="margin-top: 28px; display: none;">
-
-  <div style="text-align:center; margin-bottom: 10px;">
-    <span style="font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:3px; color:var(--gold);">▶ SEE IT IN ACTION</span>
-  </div>
-
-  <div style="position:relative; border-radius: 10px; overflow:hidden; border: 1px solid var(--card-border); box-shadow: 0 8px 40px rgba(0,0,0,0.3);">
-    
-    <!-- top fade -->
-    <div style="position:absolute; top:0; left:0; right:0; height:60px; background:linear-gradient(to bottom, rgba(16,32,104,0.85), transparent); z-index:2; pointer-events:none;"></div>
-    
-    <!-- bottom fade -->
-    <div style="position:absolute; bottom:0; left:0; right:0; height:60px; background:linear-gradient(to top, rgba(16,32,104,0.85), transparent); z-index:2; pointer-events:none;"></div>
-
-    <iframe
-      id="demoVideo"
-      width="100%"
-      style="display:block; aspect-ratio: 16/9;"
-      src="https://www.youtube.com/embed/9JR7j9Yqraw?autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en&rel=0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-  </div>
+<div id="videoWrap" style="
+  margin-top: 28px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  display: none;
+">
+  <iframe
+    id="demoVideo"
+    width="100%"
+    style="display:block; aspect-ratio: 16/9;"
+    src="https://www.youtube.com/embed/9JR7j9Yqraw?autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en&rel=0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen>
+  </iframe>
 </div>
 
     <script>
