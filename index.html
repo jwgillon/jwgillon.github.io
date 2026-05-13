@@ -361,25 +361,24 @@ background: rgba(30, 37, 144, 0.65);
     </div>
   </header>
 
-<div id="videoWrap" style="
-  margin-top: 28px;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
-  display: none;
-">
-  <div style="position:relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+    <!-- ── Demo Video ── -->
+  <div id="videoWrap" style="
+    margin-top: 28px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    display: none;
+  ">
     <iframe
       id="demoVideo"
-      style="position:absolute; top:-30px; left:0; width:100%; height:calc(100% + 60px);"
-      src="https://www.youtube.com/embed/9JR7j9Yqraw?autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en&rel=0&modestbranding=1"
+      width="100%"
+      style="display:block; aspect-ratio: 16/9;"
+      src="https://www.youtube.com/embed/9JR7j9Yqraw?autoplay=1&mute=1&cc_load_policy=1&cc_lang_pref=en&rel=0"
       allow="autoplay; encrypted-media"
       allowfullscreen>
     </iframe>
   </div>
-</div>
-
     <script>
     fetch('https://www.youtube.com/favicon.ico', {
       method: 'HEAD', mode: 'no-cors', cache: 'no-store'
